@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>爱家-房间信息</title>
+    <link href="/static/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/static/css/reset.css" rel="stylesheet">
+    <link href="/static/plugins/swiper/css/swiper.min.css" rel="stylesheet">
+    <link href="/static/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="/static/css/ihome/main.css" rel="stylesheet">
+    <link href="/static/css/ihome/detail.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <div class="nav-bar">
+                <h3 class="page-title">房间信息</h3>
+                <a class="nav-btn fl" href="#" onclick="hrefBack();"><span><i class="fa fa-angle-left fa-2x"></i></span></a>
+            </div>
+        </div>
+        <div class="swiper-container">
+            <ul class="swiper-wrapper">
+
+            </ul>
+            <div class="swiper-pagination"></div>
+            <div class="house-price">￥<span></span>/晚</div>
+        </div>
+        <div class="detail-con">
+            <div class="detail-header layout-style">
+                <h2 class="house-title">房屋标题</h2> 
+                <div class="landlord-pic"><img src="/static/images/landlord01.jpg"></div>
+                <h2 class="landlord-name">房东： <span></span></h2>
+            </div>
+            <div class="house-info layout-style">
+               <h3>房屋地址</h3>
+               <ul class="house-info-list text-center">
+                    <li class="li1"></li>
+               </ul>
+            </div>
+            <ul class="house-type layout-style">
+                <li>
+                    <span class="icon-house"></span>
+                    <div class="icon-text">
+                        <h3 class="h1"></h3>
+                        <p class="area">房屋面积:</p>
+                        <p class="type">房屋户型:</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="icon-user"></span>
+                    <div class="icon-text">
+                        <h3 class="h2"></h3>
+                    </div>
+                </li>
+                <li>
+                    <span class="icon-bed"></span>
+                    <div class="icon-text">
+                        <h3 class="h3"></h3>
+                        <p class="chuang"></p>
+                    </div>
+                </li>
+            </ul> 
+            <div class="house-info layout-style">
+                <h3 class="h4">房间详情</h3>
+                <ul class="house-info-list">
+                    <li class="li2">收取押金<span></span></li>
+                    <li class="li3">最少入住天数<span></span></li>
+                    <li class="li4">最多入住天数<span></span></li>
+                </ul>
+            </div>
+            <div class="house-facility layout-style">
+                <h3>配套设施</h3>
+                <ul class="house-facility-list clearfix">
+
+                </ul>
+            </div> 
+            <div class="house-info layout-style">
+                <h3>评价信息</h3>
+                <ul class="house-comment-list">
+                    <li>
+                        <p>用户名<span class="fr">2016-11-11 20:00:00</span></p>
+                        <p>感觉不错</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <button class="book-house" onclick="is_auth()">即刻预定</button>
+        <div class="footer">
+            <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
+        </div>
+    </div>
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/plugins/swiper/js/swiper.jquery.min.js"></script>
+    <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/static/js/template.js"></script>
+    <script src="/static/js/ihome/detail.js"></script>
+    <script>
+
+        $.get('/app/house_detail/',function(re){
+            if(re.code == '200'){
+                $('.house-price span').text(re.house.price)
+                $('.house-title').text(re.house.title)
+                $('.landlord-pic img').attr("src","/static/media/"+re.house.user_avatar)
+                $('.landlord-name span').text(re.house.user_name)
+                $('.house-info-list .li1').text(re.house.address)
+                $('.house-info-list .li2 span').text(re.house.deposit)
+                $('.house-info-list .li3 span').text(re.house.min_days)
+                $('.house-info-list .li4 span').text(re.house.max_days)
+                $('.icon-text .h1').text('出租'+re.house.room_count+'间')
+                $('.icon-text .area').text('房屋面积:'+re.house.acreage+'平方')
+                $('.icon-text .type').text('房屋户型:'+re.house.unit)
+                $('.icon-text .h2').text('宜住'+re.house.capacity+'人')
+                $('.icon-text .chuang').text(re.house.beds)
+                houseNode = $('.house-facility-list')
+                imageNode = $('.swiper-wrapper')
+                for(x in re.house.facilities){
+                    <!--console.log(re.house.facilities)-->
+                    liNode = $('<li><span class="'+re.house.facilities[x].css+'"></span>'+re.house.facilities[x].name+'</li>')
+                    houseNode.append(liNode)
+                }
+                for(x in re.house.images){
+                    liNode = $('<li class="swiper-slide"><img style="height:370px" src="/static/media/'+re.house.images[x]+'"></li>')
+                    imageNode.append(liNode)
+                }
+                var mySwiper = new Swiper ('.swiper-container', {
+                    loop: true,
+                    autoplay: 2000,
+                    autoplayDisableOnInteraction: false,
+                    pagination: '.swiper-pagination',
+                    paginationType: 'fraction'
+                })
+                $(".book-house").show();
+            }
+        })
+        function is_auth(){
+            $.get('/app/is_auth',function(re){
+                if(re.code == '200'){
+                    window.location.href = '/app/booking/'
+                }else{
+                    alert(re.msg)
+                    window.location.href = '/app/auth/'
+                }
+            })
+        }
+    </script>
+</body>
+</html>
